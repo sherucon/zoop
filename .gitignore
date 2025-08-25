@@ -40,3 +40,7 @@ app-example
 
 # firebase
 firebase/
+
+#keys
+GoogleService-Info.plist
+google-services.json
