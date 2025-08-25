@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "875124646298",
+    "project_id": "zoop-5b80",
+    "storage_bucket": "zoop-5b80.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:875124646298:android:ad03c91250eff752fb1a23",
+        "android_client_info": {
+          "package_name": "com.sherhxtr.zoop"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "875124646298-dg56srgc6uh78lsftfen4vcj49us89bg.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.sherhxtr.zoop",
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
+          }
+        },
+        {
+          "client_id": "875124646298-glbmvkqes79l5ltpcqncdovehj0u3eub.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBFlSNq4yYAhKs6tE742uPlkbUsXKUIyBc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "875124646298-glbmvkqes79l5ltpcqncdovehj0u3eub.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "875124646298-37a1vt6ar94jtf8k83ac77dbs8gcim88.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.sherhxtr.zoop"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

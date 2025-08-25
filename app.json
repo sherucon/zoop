@@ -4,19 +4,23 @@
         "slug": "zoop",
         "version": "1.0.0",
         "orientation": "portrait",
-        "icon": "./assets/images/icon.png",
+        "icon": "./assets/images/zoop-trans-logo.png",
         "scheme": "zoop",
         "userInterfaceStyle": "automatic",
         "newArchEnabled": true,
         "ios": {
-            "supportsTablet": true
+            "googleServicesFile": "./GoogleService-Info.plist",
+            "supportsTablet": true,
+            "bundleIdentifier": "com.sherhxtr.zoop"
         },
         "android": {
+            "googleServicesFile": "./google-services.json",
             "adaptiveIcon": {
-                "foregroundImage": "./assets/images/adaptive-icon.png",
+                "foregroundImage": "./assets/images/zoop-trans-logo.png",
                 "backgroundColor": "#fff"
             },
-            "edgeToEdgeEnabled": true
+            "edgeToEdgeEnabled": true,
+            "package": "com.sherhxtr.zoop"
         },
         "web": {
             "bundler": "metro",
@@ -28,7 +32,7 @@
             [
                 "expo-splash-screen",
                 {
-                    "image": "./assets/images/icon.png",
+                    "image": "./assets/images/zoop-trans-logo.png",
                     "imageWidth": 200,
                     "resizeMode": "contain",
                     "backgroundColor": "#fff"
