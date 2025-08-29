@@ -1,5 +1,5 @@
 import { auth } from "@/firebase/firebaseconfig";
-import { createUserWithEmailAndPassword, User } from "firebase/auth";
+import { createUserWithEmailAndPassword, User, sendEmailVerification, signOut } from "firebase/auth";
 import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebaseconfig";
 
@@ -55,12 +55,13 @@ export default function signin() {
         }
 
         createUserWithEmailAndPassword(auth, emailTrimmed, password)
-            .then((userCredential) => {
+            .then(async (userCredential) => {
                 const user = userCredential.user;
                 console.log('Signed up:', user);
-                Alert.alert('Successfully signed up', `Welcome ${user.email}`);
-                initUser(user);
-                try { router.push('/signin'); } catch (e) { /* ignore navigation errors */ }
+                sendEmailVerification(user);
+                Alert.alert('Successfully signed up', `Welcome, please check your inbox for a verification link`);
+                await initUser(user);
+                auth.signOut();
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -82,10 +83,10 @@ export default function signin() {
                 email: user.email,
                 username: "Zooper",
                 photoUrl: "https://sherucon.tech/pfps/default_pfp.webp",
-                age: 0,
+                age: 18,
                 gender: "male",
                 lookingFor: "both",
-                firstTime: true
+                firstTime: true,
             });
         } catch (e) {
             console.error("Error adding document: ", e);

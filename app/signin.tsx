@@ -1,7 +1,8 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Alert, Dimensions, Modal, StyleSheet, TextInput, View } from 'react-native';
+import { useAuth } from './components/AuthContext';
 
 
 import { auth, db } from '@/firebase/firebaseconfig';
@@ -20,11 +21,19 @@ const logo = require('@/assets/images/zoop-trans-logo.png');
 
 
 export default function signin() {
+    const { user, loading } = useAuth();
+
+    // If already signed in, redirect to protected (tabs)
+    useEffect(() => {
+        if (!loading && user) {
+            router.replace('/onboarding');
+        }
+    }, [user, loading]);
+
     const [Email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
 
-
-    var user: User;
+    // temporary user variable removed; use value from signIn response directly
 
 
     const isValidEmail = (s: string) => {
@@ -38,14 +47,20 @@ export default function signin() {
     const handleSignin = () => {
         signInWithEmailAndPassword(auth, Email, password)
             .then(async (userCredential) => {
-                user = userCredential.user;
-                console.log("Signed in successfully");
-                const docRef = doc(db, "users", user.uid);
-                const docSnap = await getDoc(docRef);
-                if (!docSnap.exists()) {
-                    initUser(user)
+                const signedInUser = userCredential.user;
+                console.log(signedInUser)
+                if (signedInUser?.emailVerified == true) {
+                    console.log("Signed in successfully");
+                    const docRef = doc(db, "users", signedInUser.uid);
+                    const docSnap = await getDoc(docRef);
+                    if (!docSnap.exists()) {
+                        initUser(signedInUser)
+                    }
+                    router.navigate("/onboarding")
                 }
-                router.navigate("/onboarding")
+                else {
+                    auth.signOut();
+                }
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -69,7 +84,7 @@ export default function signin() {
                 email: user.email,
                 username: "Zooper",
                 photoUrl: "https://sherucon.tech/pfps/default_pfp.webp",
-                age: 0,
+                age: 18,
                 gender: "male",
                 lookingFor: "both",
                 firstTime: true
@@ -94,8 +109,6 @@ export default function signin() {
                 <PressableButton style={styles.SigningButton} label='Sign in' onPress={handleSignin} />
                 <SecondaryButton label='Not a user already? Sign up →' onPress={() => router.navigate("/signup")} />
                 <SecondaryButton label='Terms and Conditions' onPress={() => setShowTNC(true)} />
-                <SecondaryButton label='Go' onPress={() => router.navigate("/onboarding")} />
-                <SecondaryButton label='potty karlo' onPress={() => router.navigate("/profile")} />
             </View>
 
             <View style={{ justifyContent: 'center', alignItems: 'center', }}>
