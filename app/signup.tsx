@@ -4,7 +4,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebaseconfig";
 
 
-import { Alert, Dimensions, Modal, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Dimensions, Modal, StyleSheet, TextInput, View, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard } from 'react-native';
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from 'react';
@@ -57,11 +57,10 @@ export default function signin() {
         createUserWithEmailAndPassword(auth, emailTrimmed, password)
             .then(async (userCredential) => {
                 const user = userCredential.user;
+                auth.signOut();
                 console.log('Signed up:', user);
                 sendEmailVerification(user);
                 Alert.alert('Successfully signed up', `Welcome, please check your inbox for a verification link`);
-                await initUser(user);
-                auth.signOut();
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -76,24 +75,6 @@ export default function signin() {
             });
     };
 
-    const initUser = async (user: User) => {
-        try {
-            await setDoc(doc(db, "users", user.uid), {
-                uid: user.uid,
-                email: user.email,
-                username: "Zooper",
-                photoUrl: "https://sherucon.tech/pfps/default_pfp.webp",
-                age: 18,
-                gender: "male",
-                lookingFor: "both",
-                firstTime: true,
-            });
-        } catch (e) {
-            console.error("Error adding document: ", e);
-        }
-    }
-
-
     const isValidEmail = (s: string) => {
         const trimmed = s.trim();
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed);
@@ -104,39 +85,47 @@ export default function signin() {
 
 
     return (
-        <View style={styles.Container}>
-            <View style={{ flex: 1 / 2 }}>
-                <Image source={logo} style={styles.HeroLogo} />
-            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? -60 : -60}>
 
-            <Spacer size={100} />
-            <View style={{ width: "100%", alignItems: 'center', flex: 1 / 2 }}>
-                <TextInput style={styles.TextInput} placeholder='Enter your email here' placeholderTextColor={"#C0C0C0"} value={Email} onChangeText={setEmail} inputMode="email" autoCapitalize="none" />
-                {Email.length > 0 && !isValidEmail(Email) ? (<TypingText text="• enter a valid email" delay={6} />) : null}
-
-                <TextInput style={[styles.TextInput, { marginTop: 5 }]} placeholder='Enter your password here' placeholderTextColor={"#C0C0C0"} value={password} onChangeText={setPassword} secureTextEntry />
-                {password.length > 0 && schema.validate(password, { list: true }).includes("min") ? (<TypingText text="• must contain atleast 8 characters" delay={6} />) : null}
-                {password.length > 0 && schema.validate(password, { list: true }).includes("lowercase") ? (<TypingText text="• must contain atleast 1 lowercase character" delay={6} />) : null}
-                {password.length > 0 && schema.validate(password, { list: true }).includes("uppercase") ? (<TypingText text="• must contain atleast 1 uppercase character" delay={6} />) : null}
-                {password.length > 0 && schema.validate(password, { list: true }).includes("digits") ? (<TypingText text="• must contain atleast 3 digits" delay={6} />) : null}
-                {password.length > 0 && schema.validate(password, { list: true }).includes("spaces") ? (<TypingText text="• must not contain spaces" delay={6} />) : null}
-
-                <PressableButton style={styles.SigningButton} label='Sign up' onPress={handleSignup} />
-                <SecondaryButton label='Already a user? Sign in →' onPress={() => router.navigate("/signin")} />
-                <SecondaryButton label='Terms and Conditions' onPress={() => setShowTNC(true)} />
-            </View>
-
-            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                <Modal visible={TNCShown} transparent={true} animationType='slide' style={{ width: "90%" }}>
-                    <View style={styles.ModalContainer}>
-                        <TermsAndConditions />
-                        <View style={{ padding: 10, }}>
-                            <PressableButton label='Close' onPress={() => setShowTNC(false)} />
-                        </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.Container}>
+                    <View style={{ flex: 1 / 2 }}>
+                        <Image source={logo} style={styles.HeroLogo} />
                     </View>
-                </Modal>
-            </View>
-        </View>
+
+                    <Spacer size={100} />
+                    <View style={{ width: "100%", alignItems: 'center', flex: 1 / 2 }}>
+                        <TextInput style={styles.TextInput} placeholder='Enter your email here' placeholderTextColor={"#C0C0C0"} value={Email} onChangeText={setEmail} inputMode="email" autoCapitalize="none" />
+                        {Email.length > 0 && !isValidEmail(Email) ? (<TypingText text="• enter a valid email" delay={6} />) : null}
+
+                        <TextInput style={[styles.TextInput, { marginTop: 5 }]} placeholder='Enter your password here' placeholderTextColor={"#C0C0C0"} value={password} onChangeText={setPassword} secureTextEntry />
+                        {password.length > 0 && schema.validate(password, { list: true }).includes("min") ? (<TypingText text="• must contain atleast 8 characters" delay={6} />) : null}
+                        {password.length > 0 && schema.validate(password, { list: true }).includes("lowercase") ? (<TypingText text="• must contain atleast 1 lowercase character" delay={6} />) : null}
+                        {password.length > 0 && schema.validate(password, { list: true }).includes("uppercase") ? (<TypingText text="• must contain atleast 1 uppercase character" delay={6} />) : null}
+                        {password.length > 0 && schema.validate(password, { list: true }).includes("digits") ? (<TypingText text="• must contain atleast 3 digits" delay={6} />) : null}
+                        {password.length > 0 && schema.validate(password, { list: true }).includes("spaces") ? (<TypingText text="• must not contain spaces" delay={6} />) : null}
+
+                        <PressableButton style={styles.SigningButton} label='Sign up' onPress={handleSignup} />
+                        <SecondaryButton label='Already a user? Sign in →' onPress={() => router.navigate("/signin")} />
+                        <SecondaryButton label='Terms and Conditions' onPress={() => setShowTNC(true)} />
+                    </View>
+
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Modal visible={TNCShown} transparent={true} animationType='slide' style={{ width: "90%" }}>
+                            <View style={styles.ModalContainer}>
+                                <TermsAndConditions />
+                                <View style={{ padding: 10, }}>
+                                    <PressableButton label='Close' onPress={() => setShowTNC(false)} />
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -166,6 +155,7 @@ const styles = StyleSheet.create({
         height: 0.45 * Dimensions.get('window').height,
     },
     TextInput: {
+        color: "#000",
         backgroundColor: "#E8E8E8",
         paddingVertical: 15,
         width: "90%",

@@ -1,24 +1,25 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
+import { router } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Dimensions, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
 import { useUserProfile } from '@/firebase/useuserprofile';
-import { useAuth, } from './components/AuthContext';
-import PressableButton from './components/PressableButton';
-import SmallSelector from './components/SmallSelector';
+import { useAuth, } from '../components/AuthContext';
+import PressableButton from '../components/PressableButton';
+import SmallSelector from '../components/SmallSelector';
 
 
 export default function onboarding() {
     const { user, loading } = useAuth();
 
     let [usernameModalShown, setUsernameModalShown] = useState<boolean>(false);
+    let [isEditingUsername, setIsEditingUsername] = useState<boolean>(false);
 
-    let [localUsername, setLocalUsername] = useState("");
+    let [localUsername, setLocalUsername] = useState("Zooper");
     let [localAge, setLocalAge] = useState("18");
     let [localGender, setLocalGender] = useState("");
     let [localLookingFor, setLocalLookingFor] = useState("");
@@ -197,13 +198,39 @@ export default function onboarding() {
                             <MaterialCommunityIcons name="account-edit" size={16} color="#fff" />
                         </View>
                     </Pressable>
-                    <Text style={styles.Username} onPress={() => { setLocalUsername(username || ''); setUsernameModalShown(true); }} >{username}</Text>
+                    <TextInput
+                        style={styles.Username}
+                        numberOfLines={1}
+                        autoCapitalize='none'
+                        value={localUsername}
+                        onChangeText={setLocalUsername}
+                        onFocus={() => setIsEditingUsername(true)}
+                        onEndEditing={() => {
+                            setIsEditingUsername(false);
+                            handleUsernameUpdate();
+                        }}
+                        placeholder="Username"
+                        placeholderTextColor="#C0C0C0"
+                    />
                     <Text style={styles.Email}>{userProfile?.email}</Text>
                     <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                         <Modal visible={usernameModalShown} transparent={true} animationType='slide' style={{ width: "90%", }}>
                             <View style={styles.ModalContainer}>
                                 <Text style={{ alignSelf: "flex-start", fontSize: 25, padding: 10, }}>Enter new username</Text>
-                                <TextInput value={localUsername} onChangeText={setLocalUsername} style={styles.TextInput} editable={true} />
+                                <TextInput
+                                    style={styles.Username}
+                                    numberOfLines={1}
+                                    autoCapitalize='none'
+                                    value={localUsername}
+                                    onChangeText={setLocalUsername}
+                                    onFocus={() => setIsEditingUsername(true)}
+                                    onEndEditing={() => {
+                                        setIsEditingUsername(false);
+                                        handleUsernameUpdate();
+                                    }}
+                                    placeholder="Username"
+                                    placeholderTextColor="#C0C0C0"
+                                />
                                 <View style={{ padding: 10, flexDirection: "row", gap: 10, alignSelf: "flex-end" }}>
                                     <PressableButton style={styles.unButton} label='Close' onPress={() => { setUsernameModalShown(false) }} />
                                     <PressableButton style={styles.unButton} label='Submit' onPress={() => { handleUsernameUpdate(); setUsernameModalShown(false) }} />

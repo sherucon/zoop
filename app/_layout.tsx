@@ -1,4 +1,6 @@
 import { Stack } from 'expo-router';
+import { StyleSheet } from 'react-native';
+
 import { AuthProvider, useAuth } from './components/AuthContext';
 
 function InnerStack() {
@@ -11,7 +13,6 @@ function InnerStack() {
             </Stack.Protected>
             <Stack.Screen name="signin" options={{ headerShown: false }} />
             <Stack.Screen name="signup" options={{ headerShown: false }} />
-            <Stack.Screen name="onboarding" options={{ headerShown: false }} />
         </Stack>
     );
 }
@@ -23,3 +24,10 @@ export default function RootLayout() {
         </AuthProvider>
     );
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+    },
+});

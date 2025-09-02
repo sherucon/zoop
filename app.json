@@ -19,6 +19,7 @@
                 "foregroundImage": "./assets/images/zoop-trans-logo.png",
                 "backgroundColor": "#fff"
             },
+            "softwareKeyboardLayoutMode": "pan",
             "edgeToEdgeEnabled": true,
             "package": "com.sherhxtr.zoop"
         },
@@ -42,6 +43,33 @@
                 "expo-image-picker",
                 {
                     "photosPermission": "The app accesses your photos to let you share them with your friends."
+                }
+            ],
+            [
+                "expo-audio",
+                {
+                    "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+                }
+            ],
+            [
+                "expo-video",
+                {
+                    "supportsBackgroundPlayback": true,
+                    "supportsPictureInPicture": true
+                }
+            ],
+            [
+                "expo-av",
+                {
+                    "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone."
+                }
+            ],
+            [
+                "expo-build-properties",
+                {
+                    "android": {
+                        "ndkVersion": "27.0.12077973"
+                    }
                 }
             ]
         ],

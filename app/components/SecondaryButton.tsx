@@ -12,7 +12,7 @@ export default function SecondaryButton({ label, onPress, style }: Props) {
     return (
         <View style={[styles.Container, style]}>
             <Pressable onPress={onPress} style={styles.Pressable}>
-                <Text style={{ color: '#303030' }}>{label}</Text>
+                <Text style={{ color: '#303030', lineHeight: 20 }}>{label}</Text>
             </Pressable>
         </View>
     )

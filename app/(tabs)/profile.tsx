@@ -1,7 +1,5 @@
-
 import Ionicons from '@expo/vector-icons/Ionicons';
 import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
-import { router } from 'expo-router';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
@@ -15,16 +13,17 @@ import SmallSelector from '../components/SmallSelector';
 
 
 export default function profile() {
-    const { user, loading } = useAuth();
+    const { user, loading, refreshUserProfile } = useAuth();
 
     let [usernameModalShown, setUsernameModalShown] = useState<boolean>(false);
+    let [isEditingUsername, setIsEditingUsername] = useState<boolean>(false);
 
-    let [localUsername, setLocalUsername] = useState("");
     let [localAge, setLocalAge] = useState("18");
     let [localGender, setLocalGender] = useState("");
     let [localLookingFor, setLocalLookingFor] = useState("");
     const defaultPfp = require('@/assets/images/default_pfp.png');
     let [localPhotoUrl, setLocalPhotoUrl] = useState<string | number>(defaultPfp);
+    let [localUsername, setLocalUsername] = useState("");
 
     const {
         userProfile,
@@ -131,8 +130,9 @@ export default function profile() {
     useEffect(() => {
         const loadProfile = async () => {
             if (userProfile) {
+
                 setLocalAge(age.toString());
-                if (!usernameModalShown) setLocalUsername(username || "");
+                if (!isEditingUsername) setLocalUsername(username || "");
 
                 const url = `https://sherucon.tech/pfps/${userProfile.uid}.webp?t=${Date.now()}`;
 
@@ -170,6 +170,8 @@ export default function profile() {
         }
     };
 
+
+
     return (
         <View style={styles.Container}>
             <View style={styles.PfpContainer}>
@@ -189,7 +191,20 @@ export default function profile() {
                         <MaterialCommunityIcons name="account-edit" size={16} color="#fff" />
                     </View>
                 </Pressable>
-                <Text style={styles.Username} onPress={() => { setLocalUsername(username || ''); setUsernameModalShown(true); }} >{username}</Text>
+                <TextInput
+                    style={styles.Username}
+                    numberOfLines={1}
+                    autoCapitalize='none'
+                    value={localUsername}
+                    onChangeText={setLocalUsername}
+                    onFocus={() => setIsEditingUsername(true)}
+                    onEndEditing={() => {
+                        setIsEditingUsername(false);
+                        handleUsernameUpdate();
+                    }}
+                    placeholder="Username"
+                    placeholderTextColor="#C0C0C0"
+                />
                 <Text style={styles.Email}>{userProfile?.email}</Text>
                 <View style={{ justifyContent: 'center', alignItems: 'center', }}>
                     <Modal visible={usernameModalShown} transparent={true} animationType='slide' style={{ width: "90%", }}>

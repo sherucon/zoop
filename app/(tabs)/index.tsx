@@ -1,17 +1,35 @@
-import { createUserWithEmailAndPassword, getAuth } from "firebase/auth";
-import { Text, TextInput, View, Button } from 'react-native';
-import { router } from "expo-router";
+import { Text, View } from 'react-native';
 
 
 
-import { app } from "@/firebase/firebaseconfig";
-import { navigate } from "expo-router/build/global-state/routing";
+
+import { useUserProfile } from '@/firebase/useuserprofile';
+import { useAuth } from "../components/AuthContext";
+
 
 export default function index() {
+    const { user, loading } = useAuth();
+    const {
+        userProfile,
+        uid,
+        age,
+        gender,
+        lookingFor,
+        photoUrl,
+        firstTime,
+        username,
+        updateAge,
+        updateGender,
+        updateLookingFor,
+        updateUsername,
+        updateUserPfp,
+        updateFirstTime
+    } = useUserProfile();
+
+
     return (
-        <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
-            <Text>OK NIGGA</Text>
-            <Button title="go" onPress={() => router.push("/signin")} />
+        <View>
+            <Text>Hello</Text>
         </View>
     )
 }

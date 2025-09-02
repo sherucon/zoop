@@ -1,9 +1,8 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from 'react';
-import { Alert, Dimensions, Modal, StyleSheet, TextInput, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { useAuth } from './components/AuthContext';
-
 
 import { auth, db } from '@/firebase/firebaseconfig';
 import { signInWithEmailAndPassword, User } from 'firebase/auth';
@@ -21,7 +20,7 @@ const logo = require('@/assets/images/zoop-trans-logo.png');
 
 
 export default function signin() {
-    const { user, loading } = useAuth();
+    const { user, loading, refreshUserProfile } = useAuth();
 
     // If already signed in, redirect to protected (tabs)
     useEffect(() => {
@@ -54,12 +53,14 @@ export default function signin() {
                     const docRef = doc(db, "users", signedInUser.uid);
                     const docSnap = await getDoc(docRef);
                     if (!docSnap.exists()) {
-                        initUser(signedInUser)
+                        await initUser(signedInUser)
                     }
-                    router.navigate("/onboarding")
+                    refreshUserProfile();
+                    router.navigate("/(tabs)/onboarding")
                 }
                 else {
                     auth.signOut();
+                    Alert.alert("Please verify your email from the link sent to your mail. \n Check your spam folder")
                 }
             })
             .catch((error) => {
@@ -68,8 +69,9 @@ export default function signin() {
                 console.log(errorCode, errorMessage);
 
                 if (errorCode === "auth/invalid-credential") {
-                    Alert.alert('Sign up failed', 'Invalid credentials');
+                    Alert.alert('Sign in failed', 'Invalid credentials.');
                 }
+
                 else {
                     Alert.alert('Sign up failed', errorMessage + "Please report this" || 'Unknown error' + "Please report this");
                 }
@@ -95,33 +97,41 @@ export default function signin() {
     }
 
     return (
-        <View style={styles.Container}>
-            <View style={{ flex: 1 / 2 }}>
-                <Image source={logo} style={styles.HeroLogo} />
-            </View>
+        <KeyboardAvoidingView
+            style={{ flex: 1 }}
+            behavior={Platform.OS === "ios" ? "padding" : "height"}
+            keyboardVerticalOffset={Platform.OS === "ios" ? -60 : -90}>
 
-            <Spacer size={100} />
-            <View style={{ width: "100%", alignItems: 'center', flex: 1 / 2 }}>
-                <TextInput style={styles.TextInput} placeholder='Enter your email here' placeholderTextColor={"#C0C0C0"} value={Email} onChangeText={setEmail} inputMode="email" autoCapitalize='none' />
-                {Email.length > 0 && !isValidEmail(Email) ? (<TypingText text="• enter a valid email" delay={6} />) : null}
-                <TextInput style={[styles.TextInput, { marginTop: 5 }]} placeholder='Enter your password here' placeholderTextColor={"#C0C0C0"} value={password} onChangeText={setPassword} secureTextEntry />
-
-                <PressableButton style={styles.SigningButton} label='Sign in' onPress={handleSignin} />
-                <SecondaryButton label='Not a user already? Sign up →' onPress={() => router.navigate("/signup")} />
-                <SecondaryButton label='Terms and Conditions' onPress={() => setShowTNC(true)} />
-            </View>
-
-            <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                <Modal visible={TNCShown} transparent={true} animationType='slide' style={{ width: "90%" }}>
-                    <View style={styles.ModalContainer}>
-                        <TermsAndConditions />
-                        <View style={{ padding: 10, }}>
-                            <PressableButton label='Close' onPress={() => setShowTNC(false)} />
-                        </View>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+                <View style={styles.Container}>
+                    <View style={{ flex: 1 / 2 }}>
+                        <Image source={logo} style={styles.HeroLogo} />
                     </View>
-                </Modal>
-            </View>
-        </View>
+
+                    <Spacer size={100} />
+                    <View style={{ width: "100%", alignItems: 'center', flex: 1 / 2 }}>
+                        <TextInput style={styles.TextInput} placeholder='Enter your email here' placeholderTextColor={"#C0C0C0"} value={Email} onChangeText={setEmail} inputMode="email" autoCapitalize='none' />
+                        {Email.length > 0 && !isValidEmail(Email) ? (<TypingText text="• enter a valid email" delay={6} />) : null}
+                        <TextInput style={[styles.TextInput, { marginTop: 5 }]} placeholder='Enter your password here' placeholderTextColor={"#C0C0C0"} value={password} onChangeText={setPassword} secureTextEntry />
+
+                        <PressableButton style={styles.SigningButton} label='Sign in' onPress={handleSignin} />
+                        <SecondaryButton label='Not a user already? Sign up →' onPress={() => router.navigate("/signup")} />
+                        <SecondaryButton label='Terms and Conditions' onPress={() => setShowTNC(true)} />
+                    </View>
+
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Modal visible={TNCShown} transparent={true} animationType='slide' style={{ width: "90%" }}>
+                            <View style={styles.ModalContainer}>
+                                <TermsAndConditions />
+                                <View style={{ padding: 10, }}>
+                                    <PressableButton label='Close' onPress={() => setShowTNC(false)} />
+                                </View>
+                            </View>
+                        </Modal>
+                    </View>
+                </View>
+            </TouchableWithoutFeedback>
+        </KeyboardAvoidingView>
     )
 }
 
@@ -148,11 +158,12 @@ const styles = StyleSheet.create({
         borderWidth: 2
     },
     HeroLogo: {
-        top: 50,
+        paddingTop: 50,
         aspectRatio: 1,
         height: 0.45 * Dimensions.get('window').height,
     },
     TextInput: {
+        color: "#000",
         backgroundColor: "#E8E8E8",
         paddingVertical: 15,
         width: "90%",
