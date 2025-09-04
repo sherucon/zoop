@@ -2,9 +2,9 @@ import { View, Text, Pressable, StyleSheet, } from 'react-native';
 import { ViewStyle } from 'react-native/Libraries/StyleSheet/StyleSheetTypes';
 
 type Props = {
-    label: string,
+    label?: string,
     onPress?: () => void,
-    icon?: React.ReactElement,
+    icon?: React.ReactNode,
     style?: ViewStyle,
 }
 
@@ -17,6 +17,7 @@ export default function PressableButton({ label, onPress, icon, style }: Props) 
                 {icon}
                 {icon ? <Spacer size={10} /> : null}
                 <Text style={{ color: '#fff', fontWeight: 'bold', }}>{label}</Text>
+
             </Pressable>
         </View>
     )
