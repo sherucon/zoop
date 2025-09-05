@@ -4,7 +4,7 @@ import { doc, setDoc } from "firebase/firestore";
 import { db } from "@/firebase/firebaseconfig";
 
 
-import { Alert, Dimensions, Modal, StyleSheet, TextInput, View, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard } from 'react-native';
+import { Alert, Dimensions, Modal, StyleSheet, TextInput, View, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from 'react';
@@ -25,7 +25,7 @@ const logo = require('@/assets/images/zoop-trans-logo.png');
 export default function signin() {
     const [Email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
-
+    const [processing, setProcessing] = useState(false);
 
     var passwordValidator = require('password-validator');
 
@@ -54,6 +54,7 @@ export default function signin() {
             return;
         }
 
+        setProcessing(true);
         createUserWithEmailAndPassword(auth, emailTrimmed, password)
             .then(async (userCredential) => {
                 const user = userCredential.user;
@@ -61,6 +62,7 @@ export default function signin() {
                 console.log('Signed up:', user);
                 sendEmailVerification(user);
                 Alert.alert('Successfully signed up', `Welcome, please check your inbox for a verification link`);
+                setProcessing(false);
             })
             .catch((error) => {
                 const errorCode = error.code;
@@ -72,6 +74,7 @@ export default function signin() {
                 else {
                     Alert.alert('Sign up failed', errorMessage + "Please report this" || 'Unknown error' + "Please report this");
                 }
+                setProcessing(false);
             });
     };
 
@@ -120,6 +123,13 @@ export default function signin() {
                                 <View style={{ padding: 10, }}>
                                     <PressableButton label='Close' onPress={() => setShowTNC(false)} />
                                 </View>
+                            </View>
+                        </Modal>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Modal visible={processing} transparent={true} animationType='none' style={{ width: "100%", height: "100%", }}>
+                            <View style={{ paddingTop: 0.50 * Dimensions.get("window").height, backgroundColor: "#FFF", opacity: 0.3, height: Dimensions.get("window").height, width: Dimensions.get("window").width }}>
+                                <ActivityIndicator color={"black"} />
                             </View>
                         </Modal>
                     </View>

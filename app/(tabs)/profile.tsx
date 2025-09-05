@@ -3,13 +3,14 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { Dimensions, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ScrollView, ActivityIndicator, Dimensions, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
 import { useUserProfile } from '@/firebase/useuserprofile';
 import { useAuth, } from '../components/AuthContext';
 import PressableButton from '../components/PressableButton';
 import SmallSelector from '../components/SmallSelector';
+import { RefreshControl } from 'react-native-gesture-handler';
 
 
 export default function profile() {
@@ -22,8 +23,9 @@ export default function profile() {
     let [localGender, setLocalGender] = useState("");
     let [localLookingFor, setLocalLookingFor] = useState("");
     const defaultPfp = require('@/assets/images/default_pfp.png');
-    let [localPhotoUrl, setLocalPhotoUrl] = useState<string | number>(defaultPfp);
+    let [localPhotoUrl, setLocalPhotoUrl] = useState<string | null>(null);
     let [localUsername, setLocalUsername] = useState("");
+    const [processing, setProcessing] = useState(false);
 
     const {
         userProfile,
@@ -170,125 +172,141 @@ export default function profile() {
         }
     };
 
-
+    if (!localPhotoUrl) {
+        return (
+            <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+                <ActivityIndicator />
+            </View>
+        )
+    }
 
     return (
-        <View style={styles.Container}>
-            <View style={styles.PfpContainer}>
-                <Pressable onPress={pickImageAsync}>
-                    <Image style={styles.Pfp} source={typeof localPhotoUrl === 'string' ? { uri: localPhotoUrl } : localPhotoUrl} />
-                    <View style={{
-                        position: 'absolute',
-                        bottom: 6,
-                        right: 10,
-                        backgroundColor: '#007AFF',
-                        borderRadius: 15,
-                        width: 30,
-                        height: 30,
-                        justifyContent: 'center',
-                        alignItems: 'center'
-                    }}>
-                        <MaterialCommunityIcons name="account-edit" size={16} color="#fff" />
-                    </View>
-                </Pressable>
-                <TextInput
-                    style={styles.Username}
-                    numberOfLines={1}
-                    autoCapitalize='none'
-                    value={localUsername}
-                    onChangeText={setLocalUsername}
-                    onFocus={() => setIsEditingUsername(true)}
-                    onEndEditing={() => {
-                        setIsEditingUsername(false);
-                        handleUsernameUpdate();
-                    }}
-                    placeholder="Username"
-                    placeholderTextColor="#C0C0C0"
+        <ScrollView
+            contentContainerStyle={{ flex: 1, }}
+            refreshControl={
+                <RefreshControl
+                    refreshing={processing}
+                    onRefresh={refreshUserProfile}
                 />
-                <Text style={styles.Email}>{userProfile?.email}</Text>
-                <View style={{ justifyContent: 'center', alignItems: 'center', }}>
-                    <Modal visible={usernameModalShown} transparent={true} animationType='slide' style={{ width: "90%", }}>
-                        <View style={styles.ModalContainer}>
-                            <Text style={{ alignSelf: "flex-start", fontSize: 25, padding: 10, }}>Enter new username</Text>
-                            <TextInput value={localUsername} onChangeText={setLocalUsername} style={styles.TextInput} editable={true} />
-                            <View style={{ padding: 10, flexDirection: "row", gap: 10, alignSelf: "flex-end" }}>
-                                <PressableButton style={styles.unButton} label='Close' onPress={() => { setUsernameModalShown(false) }} />
-                                <PressableButton style={styles.unButton} label='Submit' onPress={() => { handleUsernameUpdate(); setUsernameModalShown(false) }} />
-                            </View>
+            }
+        >
+            <View style={styles.Container}>
+                <View style={styles.PfpContainer}>
+                    <Pressable onPress={pickImageAsync}>
+                        <Image style={styles.Pfp} source={typeof localPhotoUrl === 'string' ? { uri: localPhotoUrl } : localPhotoUrl} />
+                        <View style={{
+                            position: 'absolute',
+                            bottom: 6,
+                            right: 10,
+                            backgroundColor: '#007AFF',
+                            borderRadius: 15,
+                            width: 30,
+                            height: 30,
+                            justifyContent: 'center',
+                            alignItems: 'center'
+                        }}>
+                            <MaterialCommunityIcons name="account-edit" size={16} color="#fff" />
                         </View>
-                    </Modal>
-                </View>
-            </View>
-            <View style={styles.SlipContainer}>
-                <View style={styles.Slip}>
-                    <Text>Age</Text>
-                    <SmallSelector
-                        onPress={() => { }}
-                    />
-
+                    </Pressable>
                     <TextInput
-                        editable={true}
-                        value={localAge}
-                        onChangeText={setLocalAge}
-                        onEndEditing={handleAgeUpdate}
-                        placeholder="Enter age"
-                        placeholderTextColor="#808080"
-                        keyboardType="numeric"
-                        style={{ color: '#007AFF', fontSize: 16, minWidth: 60, textAlign: 'right', padding: 0 }}
+                        style={styles.Username}
+                        numberOfLines={1}
+                        autoCapitalize='none'
+                        value={localUsername}
+                        onChangeText={setLocalUsername}
+                        onFocus={() => setIsEditingUsername(true)}
+                        onEndEditing={() => {
+                            setIsEditingUsername(false);
+                            handleUsernameUpdate();
+                        }}
+                        placeholder="Username"
+                        placeholderTextColor="#C0C0C0"
                     />
-                </View>
-                <View style={styles.Slip}>
-                    <Text>Gender</Text>
-                    <View style={{ flexDirection: 'row', gap: 10 }}>
-                        <SmallSelector
-                            onPress={() => updateGender('male')}
-                            icon={<Ionicons
-                                name="male"
-                                size={25}
-                                color={gender === 'male' ? '#007AFF' : '#C0C0C0'}
-                            />}
-                        />
-                        <SmallSelector
-                            onPress={() => updateGender('female')}
-                            icon={<Ionicons
-                                name="female"
-                                size={25}
-                                color={gender === 'female' ? '#007AFF' : '#C0C0C0'}
-                            />}
-                        />
+                    <Text style={styles.Email}>{userProfile?.email}</Text>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Modal visible={usernameModalShown} transparent={true} animationType='slide' style={{ width: "90%", }}>
+                            <View style={styles.ModalContainer}>
+                                <Text style={{ alignSelf: "flex-start", fontSize: 25, padding: 10, }}>Enter new username</Text>
+                                <TextInput value={localUsername} onChangeText={setLocalUsername} style={styles.TextInput} editable={true} />
+                                <View style={{ padding: 10, flexDirection: "row", gap: 10, alignSelf: "flex-end" }}>
+                                    <PressableButton style={styles.unButton} label='Close' onPress={() => { setUsernameModalShown(false) }} />
+                                    <PressableButton style={styles.unButton} label='Submit' onPress={() => { handleUsernameUpdate(); setUsernameModalShown(false) }} />
+                                </View>
+                            </View>
+                        </Modal>
                     </View>
                 </View>
-                <View style={styles.Slip}>
-                    <Text>Looking for</Text>
-                    <View style={{ flexDirection: 'row', gap: 10 }}>
+                <View style={styles.SlipContainer}>
+                    <View style={styles.Slip}>
+                        <Text>Age</Text>
                         <SmallSelector
-                            onPress={() => updateLookingFor('male')}
-                            icon={<Ionicons
-                                name="male"
-                                size={25}
-                                color={lookingFor === 'male' ? '#007AFF' : '#C0C0C0'}
-                            />}
+                            onPress={() => { }}
                         />
-                        <SmallSelector
-                            onPress={() => updateLookingFor('female')}
-                            icon={<Ionicons
-                                name="female"
-                                size={25}
-                                color={lookingFor === 'female' ? '#007AFF' : '#C0C0C0'}
-                            />}
-                        />
-                        <SmallSelector
-                            onPress={() => updateLookingFor('both')}
-                            icon={<Ionicons
-                                name="male-female"
-                                size={25}
-                                color={lookingFor === 'both' ? '#007AFF' : '#C0C0C0'}
-                            />}
+
+                        <TextInput
+                            editable={true}
+                            value={localAge}
+                            onChangeText={setLocalAge}
+                            onEndEditing={handleAgeUpdate}
+                            placeholder="Enter age"
+                            placeholderTextColor="#808080"
+                            keyboardType="numeric"
+                            style={{ color: '#007AFF', fontSize: 16, minWidth: 60, textAlign: 'right', padding: 0 }}
                         />
                     </View>
+                    <View style={styles.Slip}>
+                        <Text>Gender</Text>
+                        <View style={{ flexDirection: 'row', gap: 10 }}>
+                            <SmallSelector
+                                onPress={() => updateGender('male')}
+                                icon={<Ionicons
+                                    name="male"
+                                    size={25}
+                                    color={gender === 'male' ? '#007AFF' : '#C0C0C0'}
+                                />}
+                            />
+                            <SmallSelector
+                                onPress={() => updateGender('female')}
+                                icon={<Ionicons
+                                    name="female"
+                                    size={25}
+                                    color={gender === 'female' ? '#007AFF' : '#C0C0C0'}
+                                />}
+                            />
+                        </View>
+                    </View>
+                    <View style={styles.Slip}>
+                        <Text>Looking for</Text>
+                        <View style={{ flexDirection: 'row', gap: 10 }}>
+                            <SmallSelector
+                                onPress={() => updateLookingFor('male')}
+                                icon={<Ionicons
+                                    name="male"
+                                    size={25}
+                                    color={lookingFor === 'male' ? '#007AFF' : '#C0C0C0'}
+                                />}
+                            />
+                            <SmallSelector
+                                onPress={() => updateLookingFor('female')}
+                                icon={<Ionicons
+                                    name="female"
+                                    size={25}
+                                    color={lookingFor === 'female' ? '#007AFF' : '#C0C0C0'}
+                                />}
+                            />
+                            <SmallSelector
+                                onPress={() => updateLookingFor('both')}
+                                icon={<Ionicons
+                                    name="male-female"
+                                    size={25}
+                                    color={lookingFor === 'both' ? '#007AFF' : '#C0C0C0'}
+                                />}
+                            />
+                        </View>
+                    </View>
                 </View>
-            </View>
-        </View >
+            </View >
+        </ScrollView>
     );
 }
 

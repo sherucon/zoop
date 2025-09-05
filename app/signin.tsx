@@ -1,7 +1,7 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from 'react';
-import { Alert, Dimensions, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
+import { Alert, Dimensions, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
 import { useAuth } from './components/AuthContext';
 
 import { auth, db } from '@/firebase/firebaseconfig';
@@ -31,6 +31,7 @@ export default function signin() {
 
     const [Email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
+    const [processing, setProcessing] = useState(false);
 
     // temporary user variable removed; use value from signIn response directly
 
@@ -44,6 +45,7 @@ export default function signin() {
 
 
     const handleSignin = () => {
+        setProcessing(true);
         signInWithEmailAndPassword(auth, Email, password)
             .then(async (userCredential) => {
                 const signedInUser = userCredential.user;
@@ -57,10 +59,12 @@ export default function signin() {
                     }
                     refreshUserProfile();
                     router.navigate("/(tabs)/onboarding")
+                    setProcessing(false);
                 }
                 else {
                     auth.signOut();
                     Alert.alert("Please verify your email from the link sent to your mail. \n Check your spam folder")
+                    setProcessing(false);
                 }
             })
             .catch((error) => {
@@ -75,6 +79,7 @@ export default function signin() {
                 else {
                     Alert.alert('Sign up failed', errorMessage + "Please report this" || 'Unknown error' + "Please report this");
                 }
+                setProcessing(false);
             });
     }
 
@@ -126,6 +131,13 @@ export default function signin() {
                                 <View style={{ padding: 10, }}>
                                     <PressableButton label='Close' onPress={() => setShowTNC(false)} />
                                 </View>
+                            </View>
+                        </Modal>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center', }}>
+                        <Modal visible={processing} transparent={true} animationType='none' style={{ width: "100%", height: "100%", }}>
+                            <View style={{ paddingTop: 0.50 * Dimensions.get("window").height, backgroundColor: "#FFF", opacity: 0.3, height: Dimensions.get("window").height, width: Dimensions.get("window").width }}>
+                                <ActivityIndicator color={"black"} />
                             </View>
                         </Modal>
                     </View>
