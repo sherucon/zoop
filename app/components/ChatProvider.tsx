@@ -2,7 +2,7 @@ import { PropsWithChildren, useEffect, useState } from "react";
 import { ActivityIndicator, View } from "react-native";
 import { StreamChat } from "stream-chat";
 import { Chat, OverlayProvider } from "stream-chat-expo";
-import { useUserProfile } from "../firebase/useuserprofile";
+import { useUserProfile } from "../firebase/useUserProfile";
 
 
 export const client = StreamChat.getInstance("xgae7qrdrnm4")

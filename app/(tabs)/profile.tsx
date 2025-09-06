@@ -10,7 +10,7 @@ import { RefreshControl } from 'react-native-gesture-handler';
 import { useAuth, } from '../components/AuthContext';
 import PressableButton from '../components/PressableButton';
 import SmallSelector from '../components/SmallSelector';
-import { useUserProfile } from '../firebase/useuserprofile';
+import { useUserProfile } from '../firebase/useUserProfile';
 
 
 export default function profile() {

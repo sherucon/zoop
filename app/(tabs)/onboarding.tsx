@@ -10,7 +10,7 @@ import { Dimensions, Modal, Pressable, StyleSheet, Text, TextInput, View } from 
 import { useAuth, } from '../components/AuthContext';
 import PressableButton from '../components/PressableButton';
 import SmallSelector from '../components/SmallSelector';
-import { useUserProfile } from '../firebase/useuserprofile';
+import { useUserProfile } from '../firebase/useUserProfile';
 
 
 export default function onboarding() {

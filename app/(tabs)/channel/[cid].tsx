@@ -6,30 +6,12 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
 
-import { useUserProfile } from "../../firebase/useuserprofile";
 
 export default function ChannelScreen() {
     const [channel, setChannel] = useState<ChannelType | null>(null);
     const { cid } = useLocalSearchParams<{ cid: string }>();
     const { client } = useChatContext();
     const navigation = useNavigation();
-
-    const {
-        userProfile,
-        uid,
-        age,
-        gender,
-        lookingFor,
-        photoUrl,
-        firstTime,
-        username,
-        updateAge,
-        updateGender,
-        updateLookingFor,
-        updateUsername,
-        updateUserPfp,
-        updateFirstTime
-    } = useUserProfile();
 
     const Spacer = ({ size = 10 }) => <View style={{ backgroundColor: "#fff", height: size }} />;
 

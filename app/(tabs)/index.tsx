@@ -5,7 +5,7 @@ import { Pressable, StyleSheet, View } from 'react-native';
 import { ChannelList } from 'stream-chat-expo';
 import { useAuth } from "../components/AuthContext";
 import { db } from '../firebase/firebaseconfig';
-import { useUserProfile } from '../firebase/useuserprofile';
+import { useUserProfile } from '../firebase/useUserProfile';
 
 
 import { collection, getDocs, query, where } from 'firebase/firestore';
