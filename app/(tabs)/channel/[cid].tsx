@@ -6,7 +6,7 @@ import { useEffect, useLayoutEffect, useState } from "react";
 import { Channel as ChannelType } from "stream-chat";
 import { Channel, MessageInput, MessageList, useChatContext } from "stream-chat-expo";
 
-import { useUserProfile } from "@/app/firebase/useuserprofile";
+import { useUserProfile } from "../../firebase/useuserprofile";
 
 export default function ChannelScreen() {
     const [channel, setChannel] = useState<ChannelType | null>(null);

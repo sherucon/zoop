@@ -3,8 +3,8 @@ import { router } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { ChannelList } from 'stream-chat-expo';
-import { db } from '../../firebase/firebaseconfig';
 import { useAuth } from "../components/AuthContext";
+import { db } from '../firebase/firebaseconfig';
 import { useUserProfile } from '../firebase/useuserprofile';
 
 

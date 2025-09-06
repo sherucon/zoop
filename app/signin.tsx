@@ -1,12 +1,12 @@
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useEffect, useState } from 'react';
-import { Alert, Dimensions, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View, ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Alert, Dimensions, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 import { useAuth } from './components/AuthContext';
 
-import { auth, db } from '@/firebase/firebaseconfig';
 import { signInWithEmailAndPassword, User } from 'firebase/auth';
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from './firebase/firebaseconfig';
 
 
 import PressableButton from './components/PressableButton';
@@ -58,7 +58,7 @@ export default function signin() {
                         await initUser(signedInUser)
                     }
                     refreshUserProfile();
-                    router.navigate("/(tabs)/onboarding")
+                    router.navigate("/onboarding");
                     setProcessing(false);
                 }
                 else {

@@ -1,13 +1,12 @@
-import { auth } from "@/firebase/firebaseconfig";
-import { createUserWithEmailAndPassword, User, sendEmailVerification, signOut } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
-import { db } from "@/firebase/firebaseconfig";
+
+import { createUserWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth } from "./firebase/firebaseconfig";
 
 
-import { Alert, Dimensions, Modal, StyleSheet, TextInput, View, KeyboardAvoidingView, TouchableWithoutFeedback, Platform, Keyboard, ActivityIndicator } from 'react-native';
 import { Image } from "expo-image";
 import { router } from "expo-router";
 import { useState } from 'react';
+import { ActivityIndicator, Alert, Dimensions, Keyboard, KeyboardAvoidingView, Modal, Platform, StyleSheet, TextInput, TouchableWithoutFeedback, View } from 'react-native';
 
 
 import PressableButton from './components/PressableButton';
