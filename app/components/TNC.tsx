@@ -1,5 +1,5 @@
 import React from 'react';
-import { Text, ScrollView, StyleSheet, View } from 'react-native';
+import { ScrollView, StyleSheet, Text } from 'react-native';
 
 const TermsAndConditions: React.FC = () => (
     <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
@@ -35,9 +35,6 @@ const TermsAndConditions: React.FC = () => (
 
         <Text style={styles.sectionTitle}>10. Governing Law</Text>
         <Text style={styles.paragraph}>These Terms shall be governed by and interpreted in accordance with the laws of India, without regard to its conflict of law provisions.</Text>
-
-        <Text style={styles.sectionTitle}>11. Contact Us</Text>
-        <Text style={styles.paragraph}>If you have any questions regarding these Terms, please contact us at support@zoopchat.app.</Text>
 
         <Text style={styles.paragraphItalic}>By using Zoop Chat, you acknowledge that you have read, understood, and agree to be bound by these Terms and Conditions.</Text>
     </ScrollView>

@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 
 
-import { auth, db } from "@/firebase/firebaseconfig"; // your firebase.ts file
 import { signOut as firebaseSignOut, onAuthStateChanged, User } from "firebase/auth";
 import { doc, getDoc } from "firebase/firestore";
+import { auth, db } from "../../firebase/firebaseconfig"; // your firebase.ts file
 
 export interface UserProfile {
     uid: string;

@@ -1,17 +1,14 @@
-import { Text, View, StyleSheet, Pressable } from 'react-native';
 import FontAwesome6 from '@expo/vector-icons/FontAwesome6';
-import { useState } from 'react';
 import { router } from 'expo-router';
+import { Pressable, StyleSheet, View } from 'react-native';
 
-import { useUserProfile } from '@/firebase/useuserprofile';
-import { db } from '@/firebase/firebaseconfig';
+import { ChannelList } from 'stream-chat-expo';
+import { db } from '../../firebase/firebaseconfig';
 import { useAuth } from "../components/AuthContext";
-import { Channel, ChannelList, MessageInput, MessageList, OverlayProvider } from 'stream-chat-expo';
-import { Channel as ChannelType, StreamChat, } from "stream-chat";
-import PressableButton from '../components/PressableButton';
+import { useUserProfile } from '../firebase/useuserprofile';
 
 
-import { collection, query, getDocs, where } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { client } from '../components/ChatProvider';
 
 

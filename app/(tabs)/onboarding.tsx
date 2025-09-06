@@ -7,10 +7,10 @@ import { useEffect, useState } from 'react';
 import { Dimensions, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
-import { useUserProfile } from '@/firebase/useuserprofile';
 import { useAuth, } from '../components/AuthContext';
 import PressableButton from '../components/PressableButton';
 import SmallSelector from '../components/SmallSelector';
+import { useUserProfile } from '../firebase/useuserprofile';
 
 
 export default function onboarding() {

@@ -2,12 +2,8 @@ import Ionicons from '@expo/vector-icons/Ionicons';
 import { router, Tabs } from 'expo-router';
 import { Pressable, Text } from 'react-native';
 
-import { useUserProfile } from '@/firebase/useuserprofile';
 import ChatProvider from '../components/ChatProvider';
 
-import { useEffect } from 'react';
-import { StreamChat, } from 'stream-chat';
-import { Chat, OverlayProvider } from 'stream-chat-expo';
 import { useAuth } from '../components/AuthContext';
 
 export default function TabLayout() {

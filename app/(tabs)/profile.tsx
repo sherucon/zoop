@@ -3,14 +3,14 @@ import MaterialCommunityIcons from '@expo/vector-icons/MaterialCommunityIcons';
 import { Image } from 'expo-image';
 import * as ImagePicker from 'expo-image-picker';
 import { useEffect, useState } from 'react';
-import { ScrollView, ActivityIndicator, Dimensions, Modal, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { ActivityIndicator, Dimensions, Modal, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 
 
-import { useUserProfile } from '@/firebase/useuserprofile';
+import { RefreshControl } from 'react-native-gesture-handler';
 import { useAuth, } from '../components/AuthContext';
 import PressableButton from '../components/PressableButton';
 import SmallSelector from '../components/SmallSelector';
-import { RefreshControl } from 'react-native-gesture-handler';
+import { useUserProfile } from '../firebase/useuserprofile';
 
 
 export default function profile() {
